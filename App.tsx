@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import Header from './components/Header';
 import SyllabusView from './components/SyllabusView';
@@ -7,6 +8,7 @@ import { Subject, BackupData } from './types';
 import { THEMES } from './themes';
 import SaveStatusIndicator from './components/SaveStatusIndicator';
 import { playClickSound } from './utils/sound';
+import LoadingAnimation from './components/LoadingAnimation';
 
 const SYLLABUS_STORAGE_KEY = 'gateCseSyllabusProgress';
 const THEME_STORAGE_KEY = 'gateCseTheme';
@@ -14,6 +16,7 @@ const THEME_STORAGE_KEY = 'gateCseTheme';
 type SaveStatus = 'idle' | 'saving' | 'saved';
 
 const App: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [syllabusData, setSyllabusData] = useState<Subject[]>(() => {
     try {
       const savedData = localStorage.getItem(SYLLABUS_STORAGE_KEY);
@@ -25,7 +28,7 @@ const App: React.FC = () => {
   });
   
   const [activeTheme, setActiveTheme] = useState<string>(() => {
-    return localStorage.getItem(THEME_STORAGE_KEY) || 'deepSpace';
+    return localStorage.getItem(THEME_STORAGE_KEY) || 'vedicScripture';
   });
 
   const [selectedSubjectId, setSelectedSubjectId] = useState<string | null>(null);
@@ -34,6 +37,14 @@ const App: React.FC = () => {
   const saveTimeoutRef = useRef<number | null>(null);
   const isInitialMount = useRef(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Effect for loading animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2800); // Duration of the animation
+    return () => clearTimeout(timer);
+  }, []);
 
   // Effect to save syllabus progress
   useEffect(() => {
@@ -171,39 +182,42 @@ const App: React.FC = () => {
   }, [selectedSubjectId, syllabusData]);
 
   return (
-    <div className="min-h-screen font-sans">
-      <Header 
-        activeTheme={activeTheme} 
-        setActiveTheme={setActiveTheme} 
-        onExport={handleExport}
-        onImport={handleImportClick}
-      />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {selectedSubject ? (
-          <SubjectDetail
-            subject={selectedSubject}
-            onToggleTopic={handleToggleTopic}
-            onBack={handleBack}
-          />
-        ) : (
-          <SyllabusView
-            syllabusData={syllabusData}
-            onSelectSubject={handleSelectSubject}
-          />
-        )}
-      </main>
-      <SaveStatusIndicator status={saveStatus} />
-      <footer className="text-center py-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
-        <p>Built for GATE CSE Aspirants with a futuristic touch.</p>
-      </footer>
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileChange}
-        accept="application/json"
-        style={{ display: 'none' }}
-      />
-    </div>
+    <>
+      <LoadingAnimation isVisible={isLoading} />
+      <div className={`min-h-screen font-sans transition-opacity duration-700 ease-in ${isLoading ? 'opacity-0' : 'opacity-100'}`}>
+        <Header 
+          activeTheme={activeTheme} 
+          setActiveTheme={setActiveTheme} 
+          onExport={handleExport}
+          onImport={handleImportClick}
+        />
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {selectedSubject ? (
+            <SubjectDetail
+              subject={selectedSubject}
+              onToggleTopic={handleToggleTopic}
+              onBack={handleBack}
+            />
+          ) : (
+            <SyllabusView
+              syllabusData={syllabusData}
+              onSelectSubject={handleSelectSubject}
+            />
+          )}
+        </main>
+        <SaveStatusIndicator status={saveStatus} />
+        <footer className="text-center py-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
+          <p>Built for GATE CSE Aspirants with a futuristic touch.</p>
+        </footer>
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept="application/json"
+          style={{ display: 'none' }}
+        />
+      </div>
+    </>
   );
 };
 

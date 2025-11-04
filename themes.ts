@@ -209,4 +209,27 @@ export const THEMES: Theme[] = [
       '--checkbox-border': 'rgba(255, 138, 128, 0.3)',
     }
   },
+  {
+    id: 'vedicScripture',
+    name: 'Vedic Scripture',
+    colors: {
+      '--bg-color-start': '#fdf6e3',
+      '--bg-color-mid': '#f5eeda',
+      '--bg-color-end': '#e8e2d6',
+      '--accent-gradient': 'linear-gradient(90deg, #ff9933, #c1350b)',
+      '--text-primary': '#4a2c2a',
+      '--text-secondary': '#8b5a2e',
+      '--text-accent': '#c1350b',
+      '--text-on-accent': '#fdf6e3',
+      '--card-bg': 'rgba(245, 238, 218, 0.5)',
+      '--card-border': 'rgba(74, 44, 42, 0.2)',
+      '--card-hover-bg': 'rgba(245, 238, 218, 0.8)',
+      '--card-hover-border': 'rgba(255, 153, 51, 0.5)',
+      '--header-bg': 'rgba(253, 246, 227, 0.7)',
+      '--header-border': 'rgba(74, 44, 42, 0.1)',
+      '--progress-track-bg': 'rgba(74, 44, 42, 0.15)',
+      '--checkbox-bg': 'rgba(74, 44, 42, 0.1)',
+      '--checkbox-border': 'rgba(74, 44, 42, 0.3)',
+    }
+  },
 ];
